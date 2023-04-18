@@ -25,7 +25,7 @@ jobs:
           name: "Install dbt"
           command: |
             pip install --upgrade pip setuptools
-            pip install dbt-spark[ODBC] --upgrade --pre
+            pip install dbt-spark[ODBC]
             dbt --version
       - run:
           name: "Run tests"
