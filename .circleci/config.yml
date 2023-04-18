@@ -4,26 +4,27 @@ jobs:
   integration-tests:
     docker:
       - image: cimg/python:3.9
-        user: root
+    resource_class: small
     steps:
       - checkout
       - run:
           name: "Install spark odbc drivers"
           command: |
-            apt-get update && apt-get install -y --no-install-recommends \
-              g++ unixodbc-dev unzip
+            sudo apt-get update && sudo apt-get install -y --no-install-recommends \
+              g++ unixodbc-dev unzip libsasl2-modules-gssapi-mit
             curl https://databricks.com/wp-content/uploads/drivers-2020/SimbaSparkODBC-2.6.16.1019-Debian-64bit.zip -L -o /tmp/simba_odbc.zip
             unzip /tmp/simba_odbc.zip -d /tmp/
-            dpkg -i /tmp/SimbaSparkODBC-*/*.deb
-            echo "[Simba]\nDriver = /opt/simba/spark/lib/64/libsparkodbc_sb64.so" >> /etc/odbcinst.ini
+            sudo dpkg -i /tmp/SimbaSparkODBC-*/*.deb
+            echo "[Simba]\nDriver = /opt/simba/spark/lib/64/libsparkodbc_sb64.so" | sudo tee -a /etc/odbcinst.ini
             rm /tmp/simba_odbc.zip
             rm -rf /tmp/SimbaSparkODBC*
-      - run:
-          name: "Update pip"
-          command: pip install --upgrade pip setuptools
+            cat /etc/odbcinst.ini
       - run:
           name: "Install dbt"
-          command: "echo Hello, World!"
+          command: |
+            pip install --upgrade pip setuptools
+            pip install dbt-spark[ODBC] --upgrade --pre
+            dbt --version
 
 workflows:
   test-all:
