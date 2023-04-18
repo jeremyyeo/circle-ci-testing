@@ -10,4 +10,4 @@ if [[ ! -e ~/.dbt/profiles.yml ]]; then
 fi
 
 echo "Starting integration tests"
-dbt run --target $1
+dbt debug --target $1

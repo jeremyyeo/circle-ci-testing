@@ -5,7 +5,7 @@ jobs:
     environment:
       ODBC_DRIVER: Simba
     docker:
-      - image: cimg/python:3.9
+      - image: fishtownanalytics/test-container:10
     resource_class: small
     steps:
       - checkout
@@ -13,7 +13,7 @@ jobs:
           name: "Install spark odbc drivers"
           command: |
             sudo apt-get update && sudo apt-get install -y --no-install-recommends \
-              g++ unixodbc-dev unzip libsasl2-modules-gssapi-mit
+              g++ unixodbc-dev unzip
             curl https://databricks.com/wp-content/uploads/drivers-2020/SimbaSparkODBC-2.6.16.1019-Debian-64bit.zip -L -o /tmp/simba_odbc.zip
             unzip /tmp/simba_odbc.zip -d /tmp/
             sudo dpkg -i /tmp/SimbaSparkODBC-*/*.deb
@@ -24,8 +24,8 @@ jobs:
       - run:
           name: "Install dbt"
           command: |
-            pip install --upgrade pip setuptools
-            pip install dbt-spark[ODBC]
+            python3.8 -m pip install --upgrade pip setuptools
+            python3.8 -m pip install --upgrade --pre dbt-spark[ODBC] 
             dbt --version
       - run:
           name: "Run tests"
