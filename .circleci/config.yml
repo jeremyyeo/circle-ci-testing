@@ -2,6 +2,8 @@ version: 2.1
 
 jobs:
   integration-tests:
+    environment:
+      ODBC_DRIVER: Simba
     docker:
       - image: cimg/python:3.9
     resource_class: small
@@ -25,8 +27,14 @@ jobs:
             pip install --upgrade pip setuptools
             pip install dbt-spark[ODBC] --upgrade --pre
             dbt --version
+      - run:
+          name: "Run tests"
+          command: ./run_test.sh databricks
+      - store_artifacts:
+          path: integration_tests/logs
 
 workflows:
   test-all:
     jobs:
-      - integration-tests
+      - integration-tests:
+          context: profile-databricks

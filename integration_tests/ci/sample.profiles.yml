@@ -1,0 +1,16 @@
+config:
+  send_anonymous_usage_stats: False
+  use_colors: True
+
+integration_tests:
+  target: postgres
+  outputs:
+    databricks:
+      type: spark
+      method: odbc
+      port: 443
+      driver: "{{ env_var('ODBC_DRIVER') }}"
+      host: "{{ env_var('DBT_DATABRICKS_HOST_NAME') }}"
+      endpoint: "{{ env_var('DBT_DATABRICKS_ENDPOINT') }}"
+      token: "{{ env_var('DBT_DATABRICKS_TOKEN') }}"
+      schema: dbt_external_tables_integration_tests_databricks
